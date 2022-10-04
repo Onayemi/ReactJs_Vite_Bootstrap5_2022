@@ -1,0 +1,337 @@
+Bootstrap 5 + ReactJs
+
+
+=== App.jsx
+
+import { HashRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home'
+import NotFound from './pages/NotFound'
+
+function App() {
+    return (
+        <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="*" element={<NotFound />} />
+        </Routes>
+    );
+}
+
+function WrappedApp() {
+    return (
+        <HashRouter>
+            <App />
+        </HashRouter>
+    );
+}
+
+export default WrappedApp;
+
+==== main.jsx
+
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+create pages folder
+pages ---> Home.jsx, NotFound.jsx, About.jsx
+
+=== Home.jsx
+
+function Home() {
+    return (
+        <h1>Hello World</h1>
+    );
+}
+export default Home
+
+=== NotFound.jsx
+import { Link } from 'react-router-dom';
+function NotFound() {
+    return (
+        <>
+            <h1>Page Not Found</h1>
+            <Link to="/">Go Home</Link>
+        </>
+    );
+}
+export default 
+
+-----------------------
+main.jsx
+
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import WrappedApp from './App'
+// import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <WrappedApp />
+  </React.StrictMode>
+);
+
+----------------
+App.jsx
+
+import { useState } from 'react'
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import {Home, Register, Dashboard, Error } from './pages'
+import Navbar from './pages/Navbar'
+
+function App() {
+  return (
+    <>
+      <Navbar />
+        <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='dashboard' element={<Dashboard />} />
+            <Route path='Register' element={<Register />} />
+            <Route path='*' element={<Error />} />
+        </Routes>
+      <Outlet />
+    </>
+  );
+}
+
+function WrappedApp() {
+    return (
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    );
+}
+
+export default WrappedApp;
+
+
+<div class="card" style="width: 18rem;">
+  <img src="..." class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+
+<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label">Email address</label>
+  <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+</div>
+<div class="mb-3">
+  <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
+  <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+</div>
+
+<input class="form-control form-control-lg" type="text" placeholder=".form-control-lg" aria-label=".form-control-lg example">
+<input class="form-control" type="text" placeholder="Default input" aria-label="default input example">
+<input class="form-control form-control-sm" type="text" placeholder=".form-control-sm" aria-label=".form-control-sm example">
+
+<div class="mb-3">
+  <label for="formFile" class="form-label">Default file input example</label>
+  <input class="form-control" type="file" id="formFile">
+</div>
+
+<select class="form-select" aria-label="Default select example">
+  <option selected>Open this select menu</option>
+  <option value="1">One</option>
+  <option value="2">Two</option>
+  <option value="3">Three</option>
+</select>
+
+<div class="form-floating mb-3">
+  <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+  <label for="floatingInput">Email address</label>
+</div>
+<div class="form-floating">
+  <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+  <label for="floatingPassword">Password</label>
+</div>
+
+<div class="row">
+  <div class="col">
+    <input type="text" class="form-control" placeholder="First name" aria-label="First name">
+  </div>
+  <div class="col">
+    <input type="text" class="form-control" placeholder="Last name" aria-label="Last name">
+  </div>
+</div>
+
+
+
+=========== Redux Toolkit ==================
+
+src/features/cart/cartSlice.js
+
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+const url = 'https://course-api.com/react-useReducer-cart-project';
+
+const initialState = {
+  cartItems: [],
+  amount: 4,
+  total: 0,
+  isLoading: true,
+};
+
+export const getCartItems = createAsyncThunk(
+  'cart/getCartItems',
+  async (name, thunkAPI) => {
+    try {
+      const resp = await axios(url);
+      return resp.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue('something went wrong');
+    }
+})
+
+const cartSlice = createSlice({
+  name: 'cart',
+  initialState,
+  reducers: {
+
+  }
+
+  extraReducers: {
+
+  }
+});
+
+export const { clearCart, removeItem, increase, decrease, calculateTotals } =
+  cartSlice.actions;
+
+export default cartSlice.reducer;
+
+
+==== store.js ======
+import { configureStore } from '@reduxjs/toolkit';
+import cartReducer from './features/cart/cartSlice';
+import modalReducer from './features/modal/modalSlice';
+export const store = configureStore({
+  reducer: {
+    cart: cartReducer,
+    modal: modalReducer,
+  },
+});
+
+-----------
+import { useSelector, useDispatch } from 'react-redux';
+const Stats = () => {
+  const { isLoading, monthlyApplication } = useSelector((store) => store.allJobs);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(showStats());
+  }, []);
+
+  return <>
+    <StatsContainer />
+    { monthlyApplication.length > 0 && <ChartsContainer />}
+  </>
+};
+export default Stats;
+-----------------------------
+
+npm install rechart
+
+---------------------
+
+npm install react-icons --save
+
+import { FaBeer, FaHome } from 'react-icons/fa';
+
+<FaBeer />
+{ 
+  title: 'Job Declined', 
+  count: stats.declined || 0, 
+  icon: <FaBug />,
+  color: '#d55a6a',
+  bcg: '#ffeeee',
+}
+
+https://momentjs.com/
+npm install moment --save
+
+const date = moment(createdAt).format('MMM Do YYY');
+
+
+import { showLoading, hideLoading, getAllJobs} from '../';
+
+export const deleteJob = createAsyncThunk('job/deleteJob',
+  async (jobId, thunkAPI) => {
+    thunkAPI.dispatch(showLoading());
+    try {
+      const resp = await customFetch.delete(`/jobs/${jobId}`, {
+        headers: {
+          authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
+        }
+      });
+      thunkAPI.dispatch(getAllJobs());
+      return resp.data
+    } catch (error){
+      thunkAPI.dispatch(hideLoading());
+      return thunkAPI.rejectWithValue(error.response.data.msg);
+    }
+  }
+);
+
+============ customFetch.js
+import axios from 'axios'
+import { getUserFromLocalStorage } from './localStorage';
+
+const customFetch = axios.create({
+  baseURL: 'http://localhost:8000/api',
+});
+
+customFetch.interceptors.request.use((config) => {
+  const user = getUserFromLocalStorage();
+  if(user){
+    config.headers.common['Authorization'] = `Bearer ${user.token}`;
+  }
+  return config;
+});
+
+export default customFetch
+
+
+======== localStorage.js
+
+export const addUserFromLocalStorage = (user) => {
+  localStorage.setItem('user', JSON.stringify(user));
+};
+
+export const removeUserFromLocalStorage = () => {
+  const result = localStorage.removeItem('user');
+};
+export const getUserFromLocalStorage = () => {
+  const result = localStorage.getItem('user');
+  const user = result ? JSON.parse(result) : null;
+  return user;
+};
+
+========== Slice
+
+export const deleteJob = createAsyncThunk('job/deleteJob',
+  async (jobId, thunkAPI) => {
+    thunkAPI.dispatch(showLoading());
+    try {
+      const resp = await customFetch.delete(`/jobs/${jobId}`);
+      thunkAPI.dispatch(getAllJobs());
+      return resp.data
+    } catch (error){
+      thunkAPI.dispatch(hideLoading());
+      return thunkAPI.rejectWithValue(error.response.data.msg);
+    }
+  }
+
+
+  ====== React Redux Toolkit setup
+
+  npm install @reduxjs/toolkit react-redux
